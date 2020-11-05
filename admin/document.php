@@ -1,3 +1,10 @@
+<?php
+
+  include ('../DB.php');
+  require_once ("../Class/DB.class.php");
+  require_once ("../Class/Doc.class.php");
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -178,19 +185,19 @@
           <div class="sidebar-brand sidebar-brand-sm">
             <a href="index.html">MS</a>
           </div>
-            <ul class="sidebar-menu">
-              <li class="nav-item  active">
-                <a href="#" class="nav-link ">
-                  <i class="fas fa-fire"></i><span>Dashboard</span>
-                </a>
-                <a href="document.php" class="nav-link ">
-                  <i class="fa fa-file"></i><span>Documents</span>
-                </a>
-                <a href="users.php" class="nav-link ">
-                  <i class="fa fa-user"></i><span>Users</span>
-                </a>
-              </li>
-            </ul>
+          <ul class="sidebar-menu">
+            <li class="nav-item  active">
+              <a href="/ModelSchool/admin" class="nav-link ">
+                <i class="fas fa-fire"></i><span>Dashboard</span>
+              </a>
+              <a href="document.php" class="nav-link ">
+                <i class="fa fa-file"></i><span>Documents</span>
+              </a>
+              <a href="users.php" class="nav-link ">
+                <i class="fa fa-user"></i><span>Users</span>
+              </a>
+            </li>
+          </ul>
         </aside>
       </div>
 
@@ -198,75 +205,12 @@
       <div class="main-content">
         <section class="section">
           <div class="row">
-            <div class="col-lg-4 col-md-4 col-sm-12">
-              <div class="card card-statistic-2">
-                  <div class="card-chart">
-                  <canvas id="balance-chart" height="40"></canvas>
-                </div>
-                <div class="card-icon shadow-primary bg-primary">
-                  <i class="fas fa-archive"></i>
-                </div>
-                <div class="card-wrap">
-                  <div class="card-header">
-                    <h4>Total Passlips</h4>
-                  </div>
-                  <div class="card-body">
-                    59
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-4 col-md-4 col-sm-12">
-              <div class="card card-statistic-2">
-                <div class="card-chart">
-                  <canvas id="balance-chart" height="40"></canvas>
-                </div>
-                <div class="card-icon shadow-primary bg-primary">
-                  <i class="fas fa-dollar-sign"></i>
-                </div>
-                <div class="card-wrap">
-                  <div class="card-header">
-                    <h4>Amounted Demanded</h4>
-                  </div>
-                  <div class="card-body">
-                    $187,13
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-4 col-md-4 col-sm-12">
-              <div class="card card-statistic-2">
-                <div class="card-chart">
-                  <canvas id="sales-chart" height="40"></canvas>
-                </div>
-                <div class="card-icon shadow-primary bg-primary">
-                  <i class="fas fa-shopping-bag"></i>
-                </div>
-                <div class="card-wrap">
-                  <div class="card-header">
-                    <h4>Amount Recieved</h4>
-                  </div>
-                  <div class="card-body">
-                    4,732
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
                <div class="col-12">
                 <div class="card">
                   <div class="card-header">
                     <h4>Documents</h4>
                     <div class="card-header-action">
-                      <form>
-                        <div class="input-group">
-                          <input type="text" class="form-control" placeholder="Search">
-                          <div class="input-group-btn">
-                            <button class="btn btn-primary"><i class="fas fa-search"></i></button>
-                          </div>
-                        </div>
-                      </form>
+                      
                     </div>
                   </div>
                   <div class="card-body p-0">
@@ -274,100 +218,39 @@
                       <table class="table table-striped" id="sortable-table">
                         <thead>
                           <tr>
-                            <th class="text-center">
-                              <i class="fas fa-th"></i>
-                            </th>
-                            <th>Task Name</th>
-                            <th>Progress</th>
-                            <th>Members</th>
-                            <th>Due Date</th>
+                            <th>Code</th>
+                            <th>Document</th>
+                            <th>Level</th>
+                            <th>Holder</th>
+                            <th>Reg. NO</th>
+                            <th>Issue Year</th>
                             <th>Status</th>
-                            <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr>
-                            <td>
-                              <div class="sort-handler">
-                                <i class="fas fa-th"></i>
-                              </div>
-                            </td>
-                            <td>Create a mobile app</td>
-                            <td class="align-middle">
-                              <div class="progress" data-height="4" data-toggle="tooltip" title="100%">
-                                <div class="progress-bar bg-success" data-width="100"></div>
-                              </div>
-                            </td>
-                            <td>
-                              <img alt="image" src="../assets/img/avatar/avatar-5.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Wildan Ahdian">
-                            </td>
-                            <td>2018-01-20</td>
-                            <td><div class="badge badge-success">Completed</div></td>
-                            <td><a href="#" class="btn btn-secondary">Detail</a></td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <div class="sort-handler">
-                                <i class="fas fa-th"></i>
-                              </div>
-                            </td>
-                            <td>Redesign homepage</td>
-                            <td class="align-middle">
-                              <div class="progress" data-height="4" data-toggle="tooltip" title="0%">
-                                <div class="progress-bar" data-width="0"></div>
-                              </div>
-                            </td>
-                            <td>
-                              <img alt="image" src="../assets/img/avatar/avatar-1.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Nur Alpiana">
-                              <img alt="image" src="../assets/img/avatar/avatar-3.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Hariono Yusup">
-                              <img alt="image" src="../assets/img/avatar/avatar-4.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Bagus Dwi Cahya">
-                            </td>
-                            <td>2018-04-10</td>
-                            <td><div class="badge badge-info">Todo</div></td>
-                            <td><a href="#" class="btn btn-secondary">Detail</a></td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <div class="sort-handler">
-                                <i class="fas fa-th"></i>
-                              </div>
-                            </td>
-                            <td>Backup database</td>
-                            <td class="align-middle">
-                              <div class="progress" data-height="4" data-toggle="tooltip" title="70%">
-                                <div class="progress-bar bg-warning" data-width="70"></div>
-                              </div>
-                            </td>
-                            <td>
-                              <img alt="image" src="../assets/img/avatar/avatar-1.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Rizal Fakhri">
-                              <img alt="image" src="../assets/img/avatar/avatar-2.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Hasan Basri">
-                            </td>
-                            <td>2018-01-29</td>
-                            <td><div class="badge badge-warning">In Progress</div></td>
-                            <td><a href="#" class="btn btn-secondary">Detail</a></td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <div class="sort-handler">
-                                <i class="fas fa-th"></i>
-                              </div>
-                            </td>
-                            <td>Input data</td>
-                            <td class="align-middle">
-                              <div class="progress" data-height="4" data-toggle="tooltip" title="100%">
-                                <div class="progress-bar bg-success" data-width="100"></div>
-                              </div>
-                            </td>
-                            <td>
-                              <img alt="image" src="../assets/img/avatar/avatar-2.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Rizal Fakhri">
-                              <img alt="image" src="../assets/img/avatar/avatar-5.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Isnap Kiswandi">
-                              <img alt="image" src="../assets/img/avatar/avatar-4.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Yudi Nawawi">
-                              <img alt="image" src="../assets/img/avatar/avatar-1.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Khaerul Anwar">
-                            </td>
-                            <td>2018-01-16</td>
-                            <td><div class="badge badge-success">Completed</div></td>
-                            <td><a href="#" class="btn btn-secondary">Detail</a></td>
-                          </tr>
+                          <?php
+
+                          $doc = new Doc();
+                          $result=$doc->getAllDocs();
+
+                          if (! empty($result)) {
+
+                              foreach ($result as $k => $v) {
+                              ?>
+                            <tr>
+
+                              <td> <?php echo $result[$k]["Code"]; ?></td>
+                              <td> <?php echo $result[$k]["file_name"]; ?></td>
+                              <td> <?php echo $result[$k]["level"]; ?></td>
+                              <td> <?php  echo $result[$k]["Holder"];?></td>
+                              <td> <?php  echo $result[$k]["reg_no"];?></td>
+                              <td> <?php  echo $result[$k]["issue_year"];?></td>
+                              <td> <?php  echo $result[$k]["status"];?></td>
+                            </tr>
+                          <?php
+                              }
+                          }
+                        ?>
                         </tbody>
                       </table>
                     </div>

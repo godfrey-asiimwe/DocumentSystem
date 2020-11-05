@@ -1,6 +1,5 @@
 <?php
 session_start();
-// Change this to your connection info.
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,12 +27,12 @@ session_start();
             <div class="card card-primary">
               <div class="card-header"><h4>Login</h4></div>
 
-
-            <?php
+              <?php
 
               include 'DB.php';
 
-                // Now we check if the data from the login form was submitted, isset() will check if the data exists.
+              // Now we check if the data from the login form was submitted, isset() will check if the data exists.
+
               if(isset($_POST['submit'])){
 
                 if ( !isset($_POST['email'], $_POST['password']) ) {
@@ -171,13 +170,10 @@ session_start();
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.nicescroll/3.7.6/jquery.nicescroll.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
   <script src="assets/js/stisla.js"></script>
-
   <!-- JS Libraies -->
-
   <!-- Template JS File -->
   <script src="assets/js/scripts.js"></script>
   <script src="assets/js/custom.js"></script>
-
   <!-- Page Specific JS File -->
 </body>
 </html>

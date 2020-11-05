@@ -1,9 +1,42 @@
+<?php
+
+  include ('../DB.php');
+  require_once ("../Class/DB.class.php");
+  require_once ("../Class/Doc.class.php");
+  require_once ("../Class/Roles.Class.php");
+
+?>
+
+<?php
+
+// We need to use sessions, so you should always start sessions using the below code.
+session_start();
+// If the user is not logged in redirect to the login page...
+if (!isset($_SESSION['loggedin'])) {
+  header('Location: ../index.php');
+  exit;
+}
+
+include_once '../DB.php';
+
+// We don't have the password or email info stored in sessions so instead we can get the results from the database.
+$stmt = $con->prepare('SELECT email,firstname,lastname,id,role_id FROM users WHERE id = ?');
+// In this case we can use the account ID to get the account info.
+
+$stmt->bind_param('i', $_SESSION['id']);
+$stmt->execute();
+$stmt->bind_result($email,$firstname,$lastname,$id,$role_id);
+$stmt->fetch();
+$stmt->close();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no" name="viewport">
-  <title>Admin Dashboard &mdash; ModelSchool</title>
+  <title>User Dashboard &mdash; ModelSchool</title>
 
   <!-- General CSS Files -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -159,7 +192,7 @@
           </li>
           <li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
             <img alt="image" src="../assets/img/avatar/avatar-1.png" class="rounded-circle mr-1">
-            <div class="d-sm-none d-lg-inline-block">Hi, Welcome Admin</div></a>
+            <div class="d-sm-none d-lg-inline-block"><?php echo $lastname ?> <?php echo $firstname; ?></div></a>
             <div class="dropdown-menu dropdown-menu-right">
              
               <div class="dropdown-divider"></div>
@@ -179,15 +212,9 @@
             <a href="index.html">MS</a>
           </div>
             <ul class="sidebar-menu">
-              <li class="nav-item  active">
-                <a href="#" class="nav-link ">
-                  <i class="fas fa-fire"></i><span>Dashboard</span>
-                </a>
-                <a href="document.php" class="nav-link ">
+              <li class="nav-item active">
+                <a href="/ModelSchool/user" class="nav-link ">
                   <i class="fa fa-file"></i><span>Documents</span>
-                </a>
-                <a href="users.php" class="nav-link ">
-                  <i class="fa fa-user"></i><span>Users</span>
                 </a>
               </li>
             </ul>
@@ -198,176 +225,105 @@
       <div class="main-content">
         <section class="section">
           <div class="row">
-            <div class="col-lg-4 col-md-4 col-sm-12">
-              <div class="card card-statistic-2">
-                  <div class="card-chart">
-                  <canvas id="balance-chart" height="40"></canvas>
-                </div>
-                <div class="card-icon shadow-primary bg-primary">
-                  <i class="fas fa-archive"></i>
-                </div>
-                <div class="card-wrap">
-                  <div class="card-header">
-                    <h4>Total Passlips</h4>
-                  </div>
-                  <div class="card-body">
-                    59
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-4 col-md-4 col-sm-12">
-              <div class="card card-statistic-2">
-                <div class="card-chart">
-                  <canvas id="balance-chart" height="40"></canvas>
-                </div>
-                <div class="card-icon shadow-primary bg-primary">
-                  <i class="fas fa-dollar-sign"></i>
-                </div>
-                <div class="card-wrap">
-                  <div class="card-header">
-                    <h4>Amounted Demanded</h4>
-                  </div>
-                  <div class="card-body">
-                    $187,13
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-lg-4 col-md-4 col-sm-12">
-              <div class="card card-statistic-2">
-                <div class="card-chart">
-                  <canvas id="sales-chart" height="40"></canvas>
-                </div>
-                <div class="card-icon shadow-primary bg-primary">
-                  <i class="fas fa-shopping-bag"></i>
-                </div>
-                <div class="card-wrap">
-                  <div class="card-header">
-                    <h4>Amount Recieved</h4>
-                  </div>
-                  <div class="card-body">
-                    4,732
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
                <div class="col-12">
                 <div class="card">
                   <div class="card-header">
                     <h4>Documents</h4>
                     <div class="card-header-action">
-                      <form>
-                        <div class="input-group">
-                          <input type="text" class="form-control" placeholder="Search">
-                          <div class="input-group-btn">
-                            <button class="btn btn-primary"><i class="fas fa-search"></i></button>
-                          </div>
-                        </div>
-                      </form>
+                      <button   data-toggle="modal" data-target="#logoutModal" class="dropdown-item has-icon text-danger btn btn-primary" style="color: white !important;" class="btn btn-primary">Add Document</button>
                     </div>
                   </div>
                   <div class="card-body p-0">
                     <div class="table-responsive">
                       <table class="table table-striped" id="sortable-table">
+                        <?php 
+
+                         $roles = new Roles();
+                         $role = $roles->getSpecificRole($role_id,$con);
+
+                        if($role='Issue'){
+                          ?>
                         <thead>
                           <tr>
-                            <th class="text-center">
-                              <i class="fas fa-th"></i>
-                            </th>
-                            <th>Task Name</th>
-                            <th>Progress</th>
-                            <th>Members</th>
-                            <th>Due Date</th>
+                            <th>Code</th>
+                            <th>Document</th>
+                            <th>Level</th>
+                            <th>Holder</th>
+                            <th>Reg. no</th>
+                            <th>Issue Year</th>
                             <th>Status</th>
                             <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
+                        <?php
+                          $doc = new Doc();
+                          $result=$doc->getAllDocs();
+
+                          if (! empty($result)) {
+
+                            foreach ($result as $k => $v) {
+                            ?>
+
+                            <tr>
+
+                              <td><?php echo $result[$k]["Code"]; ?></td>
+                              <td><?php echo $result[$k]["file_name"]; ?></td>
+                              <td><?php echo $result[$k]["level"]; ?></td>
+                              <td><?php  echo $result[$k]["Holder"];?></td>
+                              <td><?php  echo $result[$k]["reg_no"];?></td>
+                              <td><?php  echo $result[$k]["issue_year"];?></td>
+                              <td><?php  echo $result[$k]["status"];?></td>
+                              <td><a  data-toggle="modal" data-target="#issueDoc" class="btn btn-primary issue_doc" data-id='<?php echo $result[$k]["id"];?>' id="<?php echo $result[$k]["id"];?>" style="color: white !important;">Issue</a></td>
+
+                            </tr>
+
+                          <?php
+                            }
+                          }
+
+                          }else{
+
+                        ?>
+                        <thead>
                           <tr>
-                            <td>
-                              <div class="sort-handler">
-                                <i class="fas fa-th"></i>
-                              </div>
-                            </td>
-                            <td>Create a mobile app</td>
-                            <td class="align-middle">
-                              <div class="progress" data-height="4" data-toggle="tooltip" title="100%">
-                                <div class="progress-bar bg-success" data-width="100"></div>
-                              </div>
-                            </td>
-                            <td>
-                              <img alt="image" src="../assets/img/avatar/avatar-5.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Wildan Ahdian">
-                            </td>
-                            <td>2018-01-20</td>
-                            <td><div class="badge badge-success">Completed</div></td>
-                            <td><a href="#" class="btn btn-secondary">Detail</a></td>
+                            <th>Code</th>
+                            <th>Document</th>
+                            <th>Level</th>
+                            <th>Holder</th>
+                            <th>Reg. no</th>
+                            <th>Issue Year</th>
+                            <th>Status</th>
                           </tr>
-                          <tr>
-                            <td>
-                              <div class="sort-handler">
-                                <i class="fas fa-th"></i>
-                              </div>
-                            </td>
-                            <td>Redesign homepage</td>
-                            <td class="align-middle">
-                              <div class="progress" data-height="4" data-toggle="tooltip" title="0%">
-                                <div class="progress-bar" data-width="0"></div>
-                              </div>
-                            </td>
-                            <td>
-                              <img alt="image" src="../assets/img/avatar/avatar-1.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Nur Alpiana">
-                              <img alt="image" src="../assets/img/avatar/avatar-3.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Hariono Yusup">
-                              <img alt="image" src="../assets/img/avatar/avatar-4.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Bagus Dwi Cahya">
-                            </td>
-                            <td>2018-04-10</td>
-                            <td><div class="badge badge-info">Todo</div></td>
-                            <td><a href="#" class="btn btn-secondary">Detail</a></td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <div class="sort-handler">
-                                <i class="fas fa-th"></i>
-                              </div>
-                            </td>
-                            <td>Backup database</td>
-                            <td class="align-middle">
-                              <div class="progress" data-height="4" data-toggle="tooltip" title="70%">
-                                <div class="progress-bar bg-warning" data-width="70"></div>
-                              </div>
-                            </td>
-                            <td>
-                              <img alt="image" src="../assets/img/avatar/avatar-1.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Rizal Fakhri">
-                              <img alt="image" src="../assets/img/avatar/avatar-2.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Hasan Basri">
-                            </td>
-                            <td>2018-01-29</td>
-                            <td><div class="badge badge-warning">In Progress</div></td>
-                            <td><a href="#" class="btn btn-secondary">Detail</a></td>
-                          </tr>
-                          <tr>
-                            <td>
-                              <div class="sort-handler">
-                                <i class="fas fa-th"></i>
-                              </div>
-                            </td>
-                            <td>Input data</td>
-                            <td class="align-middle">
-                              <div class="progress" data-height="4" data-toggle="tooltip" title="100%">
-                                <div class="progress-bar bg-success" data-width="100"></div>
-                              </div>
-                            </td>
-                            <td>
-                              <img alt="image" src="../assets/img/avatar/avatar-2.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Rizal Fakhri">
-                              <img alt="image" src="../assets/img/avatar/avatar-5.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Isnap Kiswandi">
-                              <img alt="image" src="../assets/img/avatar/avatar-4.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Yudi Nawawi">
-                              <img alt="image" src="../assets/img/avatar/avatar-1.png" class="rounded-circle" width="35" data-toggle="tooltip" title="Khaerul Anwar">
-                            </td>
-                            <td>2018-01-16</td>
-                            <td><div class="badge badge-success">Completed</div></td>
-                            <td><a href="#" class="btn btn-secondary">Detail</a></td>
-                          </tr>
+                        </thead>
+                        <tbody>
+                          <?php
+                          $doc = new Doc();
+                          $result=$doc->getAllDocs();
+
+                          if (! empty($result)) {
+
+                              foreach ($result as $k => $v) {
+                              ?>
+                            <tr>
+
+                              <td> <?php echo $result[$k]["Code"]; ?></td>
+                              <td> <?php echo $result[$k]["file_name"]; ?></td>
+                              <td> <?php echo $result[$k]["level"]; ?></td>
+                              <td> <?php  echo $result[$k]["Holder"];?></td>
+                              <td> <?php  echo $result[$k]["reg_no"];?></td>
+                              <td> <?php  echo $result[$k]["issue_year"];?></td>
+                              <td> <?php  echo $result[$k]["status"];?></td>
+
+                            </tr>
+                          <?php
+                              }
+                          }
+
+
+
+                          }
+                        ?>
                         </tbody>
                       </table>
                     </div>
@@ -376,6 +332,78 @@
               </div>
           </div>
         </section>
+      </div>
+
+       <!-- Logout Modal-->
+      <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Add a Document </h5>
+              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form id="doc"  method='post' action='' enctype="multipart/form-data">
+                  <div class="form-group col-md-12 col-lg-12">
+                    <label>Document</label>
+                    <input id="uploadImage" type="file" id="file" name="file" />
+                  </div>
+                  <div class="form-group col-md-12 col-lg-12">
+                    <label>Document Code</label>
+                    <input type="text" name="code" id="code" class="form-control">
+                  </div>
+                  <div class="form-group col-md-12 col-lg-12">
+                    <label>Level</label>
+                    <input type="text" name="level" id="level" class="form-control">
+                  </div>
+                   <div class="form-group col-md-12 col-lg-12">
+                    <label>Holder (full Names)</label>
+                    <input type="text" name="name" id="name" class="form-control">
+                  </div>
+                  <div class="form-group col-md-12 col-lg-12">
+                    <label>Reg.NO</label>
+                    <input type="text" name="regno" id="regno" class="form-control">
+                  </div>
+                   <div class="form-group col-md-12 col-lg-12">
+                    <label>Doc Year</label>
+                    <input type="date" name="year" id="year" class="form-control">
+                  </div>
+                  <div class="form-group col-md-12 col-lg-12">
+                    <label>Amount Demanded</label>
+                    <input type="text" name="amout" id="amount" class="form-control">
+                  </div>
+                     <input type="hidden" name="docid" id="docid" />
+                     <input type="submit" name="add_doc" id="add_doc" value="Save" class="btn btn-success" /> 
+              </form>
+          </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- Logout Modal-->
+      <div class="modal fade" id="issueDoc" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">You are about to Issue a Document </h5>
+              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form id="issue"  method='post'  enctype="multipart/form-data">
+                  <div class="form-group col-md-12 col-lg-12">
+                    <label>Comment</label><br>
+                    <textarea id="comment" name="comment"></textarea> 
+                  </div>
+                     <input type="hidden" name="docid" id="docid" />
+                     <input type="submit" name="add_doc" id="add_doc" value="Save" class="btn btn-success" /> 
+              </form>
+          </div>
+          </div>
+        </div>
       </div>
       <footer class="main-footer">
         <div class="footer-left">
@@ -411,5 +439,83 @@
   <script src="../assets/js/page/index.js"></script>
   <!-- Page Specific JS File -->
   <script src="../assets/js/page/components-table.js"></script>
+
+  <script type="text/javascript">
+
+    $(document).ready(function(){
+    
+    $('#add_user').on('click', function(){
+
+      if($('#firstname').val() == ""){
+        alert('Please enter firstname');
+      }else{
+
+        $firstname = $('#firstname').val();
+        $lastname = $('#lastname').val();
+        $email = $('#email').val();
+        $role= $('#role').val();
+        
+        $.ajax({
+          type: "POST",
+          url: "add_user.php",
+          data: {
+
+            firstname: $firstname,
+            lastname: $lastname,
+            email:$email,
+            role:$role,
+            
+          },
+          success: function(){
+
+            $("#user")[0].reset();
+             $("#cardtable").load(" #cardtable");
+             alert(" Successfully Saved");
+          }
+        });
+      } 
+    });
+  });
+    
+  </script>
+
+  <script type="text/javascript">
+    $(document).ready(function (e) {
+       $("#form").on('submit',(function(e) {
+        e.preventDefault();
+        $.ajax({
+         url: "ajaxupload.php",
+         type: "POST",
+         data:  new FormData(this),
+         contentType: false,
+               cache: false,
+         processData:false,
+         beforeSend : function()
+         {
+          //$("#preview").fadeOut();
+          $("#err").fadeOut();
+         },
+         success: function(data)
+            {
+          if(data=='invalid')
+          {
+           // invalid file format.
+           $("#err").html("Invalid File !").fadeIn();
+          }
+          else
+          {
+           // view uploaded file.
+           $("#preview").html(data).fadeIn();
+           $("#form")[0].reset(); 
+          }
+            },
+           error: function(e) 
+            {
+          $("#err").html(e).fadeIn();
+            }          
+          });
+       }));
+      });
+  </script>
 </body>
 </html>

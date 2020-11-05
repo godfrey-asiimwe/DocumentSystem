@@ -187,15 +187,16 @@
             <a href="index.html">MS</a>
           </div>
             <ul class="sidebar-menu">
-             <!--  <li class="menu-header">ADMIN</li> -->
-              <li class="nav-item dropdown active">
-                <a href="#" class="nav-link has-dropdown">
-                  <i class="fas fa-fire"></i><span>ADMIN</span>
+              <li class="nav-item  active">
+                <a href="/ModelSchool/admin" class="nav-link ">
+                  <i class="fas fa-fire"></i><span>Dashboard</span>
                 </a>
-                <ul class="dropdown-menu">
-                  <li  class="active"><a class="nav-link" href="">Documents</a></li>
-                  <li class="active"><a class="nav-link" href="users.php">Users</a></li>
-                </ul>
+                <a href="document.php" class="nav-link ">
+                  <i class="fa fa-file"></i><span>Documents</span>
+                </a>
+                <a href="users.php" class="nav-link ">
+                  <i class="fa fa-user"></i><span>Users</span>
+                </a>
               </li>
             </ul>
         </aside>
@@ -237,15 +238,20 @@
                           $result=$user->getAllUsers();
 
                           if (! empty($result)) {
+
                               foreach ($result as $k => $v) {
                               ?>
                             <tr>
+
                               <td> <?php echo $result[$k]["firstname"]; ?></td>
                               <td> <?php echo $result[$k]["lastname"]; ?></td>
                               <td> <?php echo $result[$k]["email"]; ?></td>
+
                               <td> <?php $role=$result[$k]["role_id"];$roles->getSpecificRole($role,$con) ?></td>
+
                               <td><a href="#" class="btn btn-primary edit_data"  id="<?php echo $result[$k]["id"];?>">Edit</a></td>
-                               <td><a href="#" class="btn btn-primary delete"  id="<?php echo $result[$k]["id"];?>">Delete</a></td>
+                            
+                              <td align='center'><span class='delete' data-id='<?php echo $result[$k]["id"];?>'  id='<?php echo $result[$k]["id"];?>'>Delete</span></td>
                             </tr>
                           <?php
                               }
@@ -402,7 +408,45 @@
       }
     });
   }
+
+
+  $(document).ready(function(){
+
+    // Delete 
+    $('.delete').click(function(){
+        var el = this;
+
+        // Delete id
+        var id = $(this).data('id');
+        
+        var confirmalert = confirm("Are you sure?");
+        if (confirmalert == true) {
+            // AJAX Request
+            $.ajax({
+                url: 'remove.php',
+                type: 'POST',
+                data: { id:id },
+                success: function(response){
+    
+                    if(response == 1){
+
+                        // Remove row from HTML Table
+                        $(el).closest('tr').css('background','tomato');
+                        $(el).closest('tr').fadeOut(800,function(){
+                            $(this).remove();
+                        });
+                        
+                    }else{
+                        alert('Invalid ID.');
+                    }
+                }
+            });
+        }
+    });
+});
   
 </script>
+
+
 </body>
 </html>
