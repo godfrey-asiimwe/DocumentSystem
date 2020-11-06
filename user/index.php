@@ -274,8 +274,29 @@ $stmt->close();
                               <td><?php  echo $result[$k]["reg_no"];?></td>
                               <td><?php  echo $result[$k]["issue_year"];?></td>
                               <td><?php  echo $result[$k]["status"];?></td>
-                              <td><a  data-toggle="modal" data-target="#issueDoc" class="btn btn-primary issue_doc" data-id='<?php echo $result[$k]["id"];?>' id="<?php echo $result[$k]["id"];?>" style="color: white !important;">Issue</a></td>
+                              <?php 
 
+                              $status=$result[$k]["status"];
+
+                              if($status='issued'){
+
+                              ?>
+
+                              <td><a  class="btn btn-success" style="color: white !important;">Issued</a></td>
+
+                              <?php
+
+                              }else{
+
+
+
+                              ?>
+
+                              <td><a  class="btn btn-primary issue" data-id='<?php echo $result[$k]["id"];?>' id="<?php echo $result[$k]["id"];?>" style="color: white !important;">Issue</a></td>
+
+                              <?php
+                                }
+                              ?>
                             </tr>
 
                           <?php
@@ -382,29 +403,6 @@ $stmt->close();
         </div>
       </div>
 
-        <!-- Logout Modal-->
-      <div class="modal fade" id="issueDoc" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">You are about to Issue a Document </h5>
-              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <form id="issue"  method='post'  enctype="multipart/form-data">
-                  <div class="form-group col-md-12 col-lg-12">
-                    <label>Comment</label><br>
-                    <textarea id="comment" name="comment"></textarea> 
-                  </div>
-                     <input type="hidden" name="docid" id="docid" />
-                     <input type="submit" name="add_doc" id="add_doc" value="Save" class="btn btn-success" /> 
-              </form>
-          </div>
-          </div>
-        </div>
-      </div>
       <footer class="main-footer">
         <div class="footer-left">
           Copyright &copy; 2018 <div class="bullet"></div> Design By <a href="">Godfrey Asiimwe</a>
@@ -441,79 +439,35 @@ $stmt->close();
   <script src="../assets/js/page/components-table.js"></script>
 
   <script type="text/javascript">
-
     $(document).ready(function(){
-    
-    $('#add_user').on('click', function(){
 
-      if($('#comment').val() == ""){
-        alert('Please enter comment');
-      }else{
+        // Delete 
+        $('.issue').click(function(){
+            var el = this;
 
-        // issue id
-        var id = $(this).data('id');
-
-        $comment = $('#comment').val();
-        
-        $.ajax({
-          type: "POST",
-          url: "issue_doc.php",
-          data: {
-
-            id:id,
-            comment: $comment,
+            // Delete id
+            var id = $(this).data('id');
             
-          },
-          success: function(){
-
-            $("#issue")[0].reset();
-             $("#cardtable").load(" #cardtable");
-             alert(" Successfully Issued Document");
-          }
+            var confirmalert = confirm(" You are about to Issue a document, Are you sure?");
+            if (confirmalert == true) {
+                // AJAX Request
+                $.ajax({
+                    url: 'issue_doc.php',
+                    type: 'POST',
+                    data: { id:id },
+                    success: function(response){
+        
+                        if(response == 1){
+                            
+                        }else{
+                            alert('Invalid ID.');
+                        }
+                    }
+                });
+            }
         });
-      } 
     });
-  });
-    
   </script>
 
-  <script type="text/javascript">
-    $(document).ready(function (e) {
-       $("#form").on('submit',(function(e) {
-        e.preventDefault();
-        $.ajax({
-         url: "ajaxupload.php",
-         type: "POST",
-         data:  new FormData(this),
-         contentType: false,
-               cache: false,
-         processData:false,
-         beforeSend : function()
-         {
-          //$("#preview").fadeOut();
-          $("#err").fadeOut();
-         },
-         success: function(data)
-            {
-          if(data=='invalid')
-          {
-           // invalid file format.
-           $("#err").html("Invalid File !").fadeIn();
-          }
-          else
-          {
-           // view uploaded file.
-           $("#preview").html(data).fadeIn();
-           $("#form")[0].reset(); 
-          }
-            },
-           error: function(e) 
-            {
-          $("#err").html(e).fadeIn();
-            }          
-          });
-       }));
-      });
-  </script>
 </body>
 </html>
