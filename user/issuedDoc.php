@@ -208,7 +208,7 @@ $stmt->close();
           <div class="sidebar-brand sidebar-brand-sm">
             <a href="index.html">MS</a>
           </div>
-            <ul class="sidebar-menu">
+             <ul class="sidebar-menu">
               <li class="nav-item active">
                 <a href="/ModelSchool/user" class="nav-link ">
                   <i class="fa fa-file"></i><span>Ready </span>
@@ -232,33 +232,16 @@ $stmt->close();
                 <div class="card">
                   <div class="card-header">
                     <h4>Documents</h4>
-                    <div class="card-header-action">
-                      <?php
-
-                      $roles = new Roles();
-                      $role = $roles->getSpecificRole($role_id,$con);
-
-                      if($role='Issue'){
-
-                      }else{
-
-                      ?>
-                      <button   data-toggle="modal" data-target="#logoutModal" class="dropdown-item has-icon text-danger btn btn-primary" style="color: white !important;" class="btn btn-primary">Add Document</button>
-
-                      <?php
-                        }
-                      ?>
-                    </div>
                   </div>
                   <div class="card-body p-0">
                     <div class="table-responsive">
                       <table class="table table-striped" id="sortable-table">
                         <?php 
 
-                         
+                         $roles = new Roles();
+                         $role = $roles->getSpecificRole($role_id,$con);
 
-                        if($role='Issue'){
-                          ?>
+                       ?>
                         <thead>
                           <tr>
                             <th>Code</th>
@@ -268,60 +251,17 @@ $stmt->close();
                             <th>Reg. no</th>
                             <th>Issue Year</th>
                             <th>Status</th>
-                            <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
-                        <?php
+                          <?php
                           $doc = new Doc();
-                          $result=$doc->getAllActiveDocs();
+                          $result=$doc->getAllIssuedDocs();
 
                           if (! empty($result)) {
-
                             foreach ($result as $k => $v) {
                             ?>
-
                             <tr>
-
-                              <td><?php echo $result[$k]["Code"]; ?></td>
-                              <td><?php echo $result[$k]["file_name"]; ?></td>
-                              <td><?php echo $result[$k]["level"]; ?></td>
-                              <td><?php  echo $result[$k]["Holder"];?></td>
-                              <td><?php  echo $result[$k]["reg_no"];?></td>
-                              <td><?php  echo $result[$k]["issue_year"];?></td>
-                              <td><?php  echo $result[$k]["status"];?></td>
-                              <td><a  class="btn btn-primary issue" data-id='<?php echo $result[$k]["id"];?>' id="<?php echo $result[$k]["id"];?>" style="color: white !important;">Issue</a></td>
-                            </tr>
-
-                          <?php
-                            }
-                          }
-
-                          }else{
-
-                        ?>
-                        <thead>
-                          <tr>
-                            <th>Code</th>
-                            <th>Document</th>
-                            <th>Level</th>
-                            <th>Holder</th>
-                            <th>Reg. no</th>
-                            <th>Issue Year</th>
-                            <th>Status</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <?php
-                          $doc = new Doc();
-                          $result=$doc->getAllActiveDocs();
-
-                          if (! empty($result)) {
-
-                              foreach ($result as $k => $v) {
-                              ?>
-                            <tr>
-
                               <td> <?php echo $result[$k]["Code"]; ?></td>
                               <td> <?php echo $result[$k]["file_name"]; ?></td>
                               <td> <?php echo $result[$k]["level"]; ?></td>
@@ -329,13 +269,10 @@ $stmt->close();
                               <td> <?php  echo $result[$k]["reg_no"];?></td>
                               <td> <?php  echo $result[$k]["issue_year"];?></td>
                               <td> <?php  echo $result[$k]["status"];?></td>
-
                             </tr>
                           <?php
                             }
                           }
-                        }
-
                         ?>
                         </tbody>
                       </table>

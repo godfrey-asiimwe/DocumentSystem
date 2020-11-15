@@ -51,6 +51,18 @@ class Doc
         return $result;
     }
 
+    function getAllIssuedDocs() {
+        $sql = "SELECT * FROM docs WHERE status='issued' ORDER BY id";
+        $result = $this->db_handle->runBaseQuery($sql);
+        return $result;
+    }
+
+    function getAllActiveDocs() {
+        $sql = "SELECT * FROM docs WHERE status='active' ORDER BY id";
+        $result = $this->db_handle->runBaseQuery($sql);
+        return $result;
+    }
+
     function getAllDocsForSelection() {
         $sql = "SELECT * FROM docs ORDER BY id";
         $result = $this->db_handle->runBaseQuery($sql);

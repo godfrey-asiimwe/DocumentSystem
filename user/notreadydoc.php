@@ -1,13 +1,9 @@
 <?php
 
-  include ('../DB.php');
-  require_once ("../Class/DB.class.php");
-  require_once ("../Class/Doc.class.php");
-  require_once ("../Class/Roles.Class.php");
-
-?>
-
-<?php
+include ('../DB.php');
+require_once ("../Class/DB.class.php");
+require_once ("../Class/Doc.class.php");
+require_once ("../Class/Roles.Class.php");
 
 // We need to use sessions, so you should always start sessions using the below code.
 session_start();
@@ -17,12 +13,13 @@ if (!isset($_SESSION['loggedin'])) {
   exit;
 }
 
+//adding databse configuration file
 include_once '../DB.php';
 
 // We don't have the password or email info stored in sessions so instead we can get the results from the database.
 $stmt = $con->prepare('SELECT email,firstname,lastname,id,role_id FROM users WHERE id = ?');
-// In this case we can use the account ID to get the account info.
 
+// In this case we can use the account ID to get the account info.
 $stmt->bind_param('i', $_SESSION['id']);
 $stmt->execute();
 $stmt->bind_result($email,$firstname,$lastname,$id,$role_id);
@@ -214,7 +211,13 @@ $stmt->close();
             <ul class="sidebar-menu">
               <li class="nav-item active">
                 <a href="/ModelSchool/user" class="nav-link ">
-                  <i class="fa fa-file"></i><span>Documents</span>
+                  <i class="fa fa-file"></i><span>Ready </span>
+                </a>
+                <a href="notreadydoc.php" class="nav-link ">
+                  <i class="fa fa-file"></i><span>Not Ready</span>
+                </a>
+                <a href="issuedDoc.php" class="nav-link ">
+                  <i class="fa fa-file"></i><span>Issued</span>
                 </a>
               </li>
             </ul>
@@ -230,7 +233,21 @@ $stmt->close();
                   <div class="card-header">
                     <h4>Documents</h4>
                     <div class="card-header-action">
+                      <?php
+
+                      $roles = new Roles();
+                      $role = $roles->getSpecificRole($role_id,$con);
+
+                      if($role='Issue'){
+
+                      }else{
+
+                      ?>
                       <button   data-toggle="modal" data-target="#logoutModal" class="dropdown-item has-icon text-danger btn btn-primary" style="color: white !important;" class="btn btn-primary">Add Document</button>
+
+                      <?php
+                        }
+                      ?>
                     </div>
                   </div>
                   <div class="card-body p-0">
@@ -238,8 +255,7 @@ $stmt->close();
                       <table class="table table-striped" id="sortable-table">
                         <?php 
 
-                         $roles = new Roles();
-                         $role = $roles->getSpecificRole($role_id,$con);
+                         
 
                         if($role='Issue'){
                           ?>
@@ -258,7 +274,7 @@ $stmt->close();
                         <tbody>
                         <?php
                           $doc = new Doc();
-                          $result=$doc->getAllDocs();
+                          $result=$doc->getAllActiveDocs();
 
                           if (! empty($result)) {
 
@@ -274,8 +290,7 @@ $stmt->close();
                               <td><?php  echo $result[$k]["reg_no"];?></td>
                               <td><?php  echo $result[$k]["issue_year"];?></td>
                               <td><?php  echo $result[$k]["status"];?></td>
-                              <td><a  data-toggle="modal" data-target="#issueDoc" class="btn btn-primary issue_doc" data-id='<?php echo $result[$k]["id"];?>' id="<?php echo $result[$k]["id"];?>" style="color: white !important;">Issue</a></td>
-
+                              <td><a  class="btn btn-primary issue" data-id='<?php echo $result[$k]["id"];?>' id="<?php echo $result[$k]["id"];?>" style="color: white !important;">Issue</a></td>
                             </tr>
 
                           <?php
@@ -299,7 +314,7 @@ $stmt->close();
                         <tbody>
                           <?php
                           $doc = new Doc();
-                          $result=$doc->getAllDocs();
+                          $result=$doc->getAllActiveDocs();
 
                           if (! empty($result)) {
 
@@ -317,12 +332,10 @@ $stmt->close();
 
                             </tr>
                           <?php
-                              }
+                            }
                           }
+                        }
 
-
-
-                          }
                         ?>
                         </tbody>
                       </table>
@@ -382,29 +395,6 @@ $stmt->close();
         </div>
       </div>
 
-        <!-- Logout Modal-->
-      <div class="modal fade" id="issueDoc" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">You are about to Issue a Document </h5>
-              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <form id="issue"  method='post'  enctype="multipart/form-data">
-                  <div class="form-group col-md-12 col-lg-12">
-                    <label>Comment</label><br>
-                    <textarea id="comment" name="comment"></textarea> 
-                  </div>
-                     <input type="hidden" name="docid" id="docid" />
-                     <input type="submit" name="add_doc" id="add_doc" value="Save" class="btn btn-success" /> 
-              </form>
-          </div>
-          </div>
-        </div>
-      </div>
       <footer class="main-footer">
         <div class="footer-left">
           Copyright &copy; 2018 <div class="bullet"></div> Design By <a href="">Godfrey Asiimwe</a>
@@ -441,81 +431,36 @@ $stmt->close();
   <script src="../assets/js/page/components-table.js"></script>
 
   <script type="text/javascript">
+    $(document).ready(function(){ 
 
-    $(document).ready(function(){
-    
-    $('#add_user').on('click', function(){
+        $('.issue').click(function(){
+            var el = this;
 
-      if($('#firstname').val() == ""){
-        alert('Please enter firstname');
-      }else{
-
-        $firstname = $('#firstname').val();
-        $lastname = $('#lastname').val();
-        $email = $('#email').val();
-        $role= $('#role').val();
-        
-        $.ajax({
-          type: "POST",
-          url: "add_user.php",
-          data: {
-
-            firstname: $firstname,
-            lastname: $lastname,
-            email:$email,
-            role:$role,
+            // document id
+            var id = $(this).data('id');
             
-          },
-          success: function(){
+            var confirmalert = confirm(" You are about to Issue a document, Are you sure?");
+            if (confirmalert == true) {
+                // AJAX Request
+                $.ajax({
+                    url: 'issue_doc.php',
+                    type: 'POST',
+                    data: { id:id },
+                    success: function(response){
+        
+                        if(response == 1){
 
-            $("#user")[0].reset();
-             $("#cardtable").load(" #cardtable");
-             alert(" Successfully Saved");
-          }
+                          alert('You have successfuly Issued the Doc');
+                            
+                        }else{
+                            alert('Invalid ID.');
+                        }
+                    }
+                });
+            }
         });
-      } 
-    });
-  });
-    
-  </script>
 
-  <script type="text/javascript">
-    $(document).ready(function (e) {
-       $("#form").on('submit',(function(e) {
-        e.preventDefault();
-        $.ajax({
-         url: "ajaxupload.php",
-         type: "POST",
-         data:  new FormData(this),
-         contentType: false,
-               cache: false,
-         processData:false,
-         beforeSend : function()
-         {
-          //$("#preview").fadeOut();
-          $("#err").fadeOut();
-         },
-         success: function(data)
-            {
-          if(data=='invalid')
-          {
-           // invalid file format.
-           $("#err").html("Invalid File !").fadeIn();
-          }
-          else
-          {
-           // view uploaded file.
-           $("#preview").html(data).fadeIn();
-           $("#form")[0].reset(); 
-          }
-            },
-           error: function(e) 
-            {
-          $("#err").html(e).fadeIn();
-            }          
-          });
-       }));
-      });
+    });
   </script>
 </body>
 </html>
