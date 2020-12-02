@@ -52,13 +52,19 @@ class Doc
     }
 
     function getAllIssuedDocs() {
-        $sql = "SELECT * FROM docs WHERE status='issued' ORDER BY id";
+        $sql = "SELECT * FROM docs WHERE status='issued' AND balance=0 ORDER BY id";
         $result = $this->db_handle->runBaseQuery($sql);
         return $result;
     }
 
     function getAllActiveDocs() {
-        $sql = "SELECT * FROM docs WHERE status='active' ORDER BY id";
+        $sql = "SELECT * FROM docs WHERE status='active' AND balance=0 ORDER BY id";
+        $result = $this->db_handle->runBaseQuery($sql);
+        return $result;
+    }
+
+    function getAllNotReadyDocs() {
+        $sql = "SELECT * FROM docs WHERE status='active' AND balance>0 ORDER BY id";
         $result = $this->db_handle->runBaseQuery($sql);
         return $result;
     }
@@ -90,5 +96,58 @@ class Doc
             }
         } 
     }
+
+    //get total amount paid
+    function getTotalAmountPaid($con){
+
+        $totalPurchases=mysqli_query($con,
+        "SELECT SUM(amount) AS total FROM docs");
+
+        $d=mysqli_fetch_assoc($totalPurchases);
+
+        return $d['total'];
+    }
+
+    //get total balance
+    function getTotalBalance($con){
+
+        $totalPurchases=mysqli_query($con,
+        "SELECT SUM(balance) AS total FROM docs ");
+
+        $d=mysqli_fetch_assoc($totalPurchases);
+
+        return $d['total'];
+    }
+
+     
+    //return information about document
+    function getDocumentById($itemID,$info,$con){
+
+        $sql = "SELECT $info FROM docs WHERE  id='$itemID'";
+        $result = mysqli_query($con, $sql);
+
+        if (mysqli_num_rows($result) > 0) {
+            while($row = mysqli_fetch_assoc($result)) {
+                $data=$row["$info"];
+               return $data;
+            }
+        }
+        
+    }
+
+    //returning all certificates
+    function getAllCertificates($con){
+      $users=mysqli_query($con,"SELECT COUNT(*) AS totalcerts FROM docs WHERE type='certificate'");
+      $d=mysqli_fetch_assoc($users);
+      return $d['totalcerts'];
+    }
+
+    //returning all passlips
+    function getAllPasslips($con){
+      $users=mysqli_query($con,"SELECT COUNT(*) AS totalcerts FROM docs WHERE type='passlip'");
+      $d=mysqli_fetch_assoc($users);
+      return $d['totalcerts'];
+    }
+
 }
 ?>

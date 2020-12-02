@@ -96,7 +96,7 @@
                   </div>
                   <div class="dropdown-item-desc">
                     <b>Alfa Zulkarnain</b>
-                    <p>Exercitation ullamco laboris nisi ut aliquip ex ea commodo</p>
+                    <p>Exercitation ullamco labor is nisi ut aliquip ex ea commodo</p>
                     <div class="time">Yesterday</div>
                   </div>
                 </a>
@@ -187,17 +187,32 @@
             <a href="index.html">MS</a>
           </div>
             <ul class="sidebar-menu">
+              <li class="menu-header">Dashboard</li>
               <li class="nav-item  active">
-                <a href="/ModelSchool/admin" class="nav-link ">
+                <a href="#" class="nav-link ">
                   <i class="fas fa-fire"></i><span>Dashboard</span>
                 </a>
+              </li>
+
+              <li class="menu-header">Documents</li>
+              <li class="nav-item  active">
                 <a href="document.php" class="nav-link ">
-                  <i class="fa fa-file"></i><span>Documents</span>
+                  <i class="fas fa-fire"></i><span>Ready</span>
                 </a>
-                <a href="users.php" class="nav-link ">
-                  <i class="fa fa-user"></i><span>Users</span>
+                <a href="notreadydoc.php" class="nav-link ">
+                  <i class="fa fa-file"></i><span>Un Ready</span>
+                </a>
+                <a href="issuedDoc.php" class="nav-link ">
+                  <i class="fa fa-user"></i><span>Issued</span>
                 </a>
               </li>
+
+            <li class="menu-header">Users</li>
+            <li class="nav-item  active">
+              <a href="users.php" class="nav-link ">
+                <i class="fa fa-user"></i><span>Users</span>
+              </a>
+            </li>
             </ul>
         </aside>
       </div>
@@ -217,7 +232,7 @@
                   </div>
                   <div class="card-body p-0" >
                     <div class="table-responsive" id="cardtable">
-                      <table class="table table-striped" id="sortable-table">
+                      <table class="table table-striped" id="example">
                         <thead>
                           <tr>
                             <th>First Name</th>
@@ -238,7 +253,6 @@
                           $result=$user->getAllUsers();
 
                           if (! empty($result)) {
-
                               foreach ($result as $k => $v) {
                               ?>
                             <tr>
@@ -247,11 +261,11 @@
                               <td> <?php echo $result[$k]["lastname"]; ?></td>
                               <td> <?php echo $result[$k]["email"]; ?></td>
 
-                              <td> <?php $role=$result[$k]["role_id"];$roles->getSpecificRole($role,$con) ?></td>
+                              <td> <?php $role=$result[$k]["role_id"]; echo $roles->getSpecificRole($role,$con);  ?></td>
 
                               <td><a href="#" class="btn btn-primary edit_data"  id="<?php echo $result[$k]["id"];?>">Edit</a></td>
                             
-                              <td align='center'><span class='delete' data-id='<?php echo $result[$k]["id"];?>'  id='<?php echo $result[$k]["id"];?>'>Delete</span></td>
+                              <td align='center'><span class='delete btn btn-danger' data-id='<?php echo $result[$k]["id"];?>'  id='<?php echo $result[$k]["id"];?>'>Delete</span></td>
                             </tr>
                           <?php
                               }
@@ -338,6 +352,17 @@
   <script src="../assets/js/page/index.js"></script>
   <!-- Page Specific JS File -->
   <script src="../assets/js/page/components-table.js"></script>
+  <script src="../assets/js/jquery.dataTables.min.js"></script>
+  <script src="../assets/js/dataTables.bootstrap4.min.js"></script>
+
+  <script type="text/javascript">
+    
+    $(document).ready(function() {
+
+        $('#example').DataTable();
+
+      } );
+  </script>
 
    <script type = "text/javascript">
 
@@ -377,22 +402,22 @@
   });
 
   $(document).on('click', '.edit_data', function(){  
-         var userid = $(this).attr("id");  
-         $.ajax({  
-              url:"fetch.php",  
-              method:"POST",  
-              data:{userid:userid},  
-              dataType:"json",  
-              success:function(data){  
-                   $('#firstname').val(data.firstname);  
-                   $('#lastname').val(data.lastname);  
-                   $('#email').val(data.email);  
-                   $('#password').val(data.password);  
-                   $('#userid').val(data.id);  
-                   $('#add_user').val("Update");  
-                   $('#logoutModal').modal('show');  
-              }  
-         });  
+       var userid = $(this).attr("id");  
+       $.ajax({  
+            url:"fetch.php",  
+            method:"POST",  
+            data:{userid:userid},  
+            dataType:"json",  
+            success:function(data){  
+                 $('#firstname').val(data.firstname);  
+                 $('#lastname').val(data.lastname);  
+                 $('#email').val(data.email);  
+                 $('#password').val(data.password);  
+                 $('#userid').val(data.id);  
+                 $('#add_user').val("Update");  
+                 $('#logoutModal').modal('show');  
+            }  
+       });  
     }); 
   
   function displayResult(){

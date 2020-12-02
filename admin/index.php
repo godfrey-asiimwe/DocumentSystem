@@ -1,3 +1,14 @@
+<?php
+
+  include ('../DB.php');
+  require_once ("../Class/DB.class.php");
+  require_once ("../Class/Doc.class.php");
+
+
+  $doc = new Doc();
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -179,17 +190,32 @@
             <a href="index.html">MS</a>
           </div>
             <ul class="sidebar-menu">
+              <li class="menu-header">Dashboard</li>
               <li class="nav-item  active">
                 <a href="#" class="nav-link ">
                   <i class="fas fa-fire"></i><span>Dashboard</span>
                 </a>
+              </li>
+
+               <li class="menu-header">Documents</li>
+              <li class="nav-item  active">
                 <a href="document.php" class="nav-link ">
-                  <i class="fa fa-file"></i><span>Documents</span>
+                  <i class="fas fa-fire"></i><span>Ready</span>
                 </a>
-                <a href="users.php" class="nav-link ">
-                  <i class="fa fa-user"></i><span>Users</span>
+                <a href="notreadydoc.php" class="nav-link ">
+                  <i class="fa fa-file"></i><span>Un Ready</span>
+                </a>
+                <a href="issuedDoc.php" class="nav-link ">
+                  <i class="fa fa-user"></i><span>Issued</span>
                 </a>
               </li>
+
+            <li class="menu-header">Users</li>
+            <li class="nav-item  active">
+              <a href="users.php" class="nav-link ">
+                <i class="fa fa-user"></i><span>Users</span>
+              </a>
+            </li>
             </ul>
         </aside>
       </div>
@@ -198,56 +224,75 @@
       <div class="main-content">
         <section class="section">
           <div class="row">
-            <div class="col-lg-4 col-md-4 col-sm-12">
+            <div class="col-lg-3 col-md-3 col-sm-12">
               <div class="card card-statistic-2">
-                  <div class="card-chart">
-                  <canvas id="balance-chart" height="40"></canvas>
-                </div>
+                
                 <div class="card-icon shadow-primary bg-primary">
-                  <i class="fas fa-archive"></i>
+                  <i class="fas fa-archive" style="margin-top: 13px;"></i>
                 </div>
                 <div class="card-wrap">
                   <div class="card-header">
                     <h4>Total Passlips</h4>
                   </div>
                   <div class="card-body">
-                    59
+                    <?php
+                    echo number_format($result=$doc->getAllPasslips($con));
+                   ?>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="col-lg-4 col-md-4 col-sm-12">
+              <div class="col-lg-3 col-md-3 col-sm-12">
               <div class="card card-statistic-2">
-                <div class="card-chart">
-                  <canvas id="balance-chart" height="40"></canvas>
-                </div>
+                 
                 <div class="card-icon shadow-primary bg-primary">
-                  <i class="fas fa-dollar-sign"></i>
+                  <i class="fas fa-archive" style="margin-top: 13px;"></i>
+                </div>
+                <div class="card-wrap">
+                  <div class="card-header">
+                    <h4>Total Certificates</h4>
+                  </div>
+                  <div class="card-body">
+                   <?php
+                    echo number_format($result=$doc->getAllCertificates($con));
+                   ?>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-12">
+              <div class="card card-statistic-2">
+              
+                <div class="card-icon shadow-primary bg-primary">
+                  <i class="fas fa-dollar-sign" style="margin-top: 13px;"></i>
                 </div>
                 <div class="card-wrap">
                   <div class="card-header">
                     <h4>Amounted Demanded</h4>
                   </div>
                   <div class="card-body">
-                    $187,13
+
+                   <?php
+                    echo number_format($result=$doc->getTotalBalance($con));
+                   ?>=
                   </div>
                 </div>
               </div>
             </div>
-            <div class="col-lg-4 col-md-4 col-sm-12">
+            <div class="col-lg-3 col-md-3 col-sm-12">
               <div class="card card-statistic-2">
-                <div class="card-chart">
-                  <canvas id="sales-chart" height="40"></canvas>
-                </div>
+                
                 <div class="card-icon shadow-primary bg-primary">
-                  <i class="fas fa-shopping-bag"></i>
+                  <i class="fas fa-shopping-bag" style="margin-top: 13px;"></i>
                 </div>
                 <div class="card-wrap">
                   <div class="card-header">
                     <h4>Amount Recieved</h4>
                   </div>
                   <div class="card-body">
-                    4,732
+                    <?php
+                    echo number_format($result=$doc->getTotalAmountPaid($con));
+                   ?>=
                   </div>
                 </div>
               </div>

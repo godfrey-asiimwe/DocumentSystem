@@ -25,7 +25,9 @@ class DB {
                 $resultset[] = $row;
             }
         }
-        return $resultset;
+        if(!empty($resultset)) {
+            return $resultset;
+        }
     }
     
     

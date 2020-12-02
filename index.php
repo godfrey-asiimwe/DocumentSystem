@@ -1,5 +1,7 @@
 <?php
 session_start();
+  require_once ("Class/DB.class.php");
+  require_once ("Class/Roles.Class.php");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,7 +46,7 @@ session_start();
 
                        // Prepare our SQL, preparing the SQL statement will prevent SQL injection.
 
-                        if ($stmt = $con->prepare('SELECT tid, password FROM admin WHERE email = ?')) {
+                        if ($stmt = $con->prepare('SELECT tid,password FROM admin WHERE email = ?')) {
 
                           // Bind parameters (s = string, i = int, b = blob, etc), in our case the username is a string so we use "s"
                           $stmt->bind_param('s', $_POST['email']);
@@ -76,14 +78,13 @@ session_start();
 
                         }
 
-                      }
-
-                  
+                }
+    
                 }else{
 
                         // Prepare our SQL, preparing the SQL statement will prevent SQL injection.
 
-                        if ($stmt = $con->prepare('SELECT id, password FROM users WHERE email = ?')) {
+                        if ($stmt = $con->prepare('SELECT id,password,role_id FROM users WHERE email = ?')) {
 
                           // Bind parameters (s = string, i = int, b = blob, etc), in our case the username is a string so we use "s"
                           $stmt->bind_param('s', $_POST['email']);
@@ -92,32 +93,36 @@ session_start();
                           // Store the result so we can check if the account exists in the database.
                           $stmt->store_result();
 
-                          if ($stmt->num_rows > 0) {
+                            if ($stmt->num_rows > 0) {
 
-                          $stmt->bind_result($id, $password);
-                          $stmt->fetch();
-                          
-                          // Account exists, now we verify the password.
-                          if (md5($_POST['password']) === $password) {
+                              $stmt->bind_result($id, $password, $role_id);
+                              $stmt->fetch();
 
-                            // Create sessions so we know the user is logged in, they basically act like cookies but remember the data on the server.
+                              // Account exists, now we verify the password.
+                              if (md5($_POST['password']) === $password) {
 
-                            session_regenerate_id();
-                            $_SESSION['loggedin'] = TRUE;
-                            $_SESSION['email'] = $_POST['email'];
-                            $_SESSION['id'] = $id;
-                           
-                            header('Location:user/');
-                            
-                          }else{
-                            echo 'The user does not exit in the system';
-                          }
+                              // Create sessions so we know the user is logged in, they basically act like cookies but remember the data on the server.
+
+                              session_regenerate_id();
+                              $_SESSION['loggedin'] = TRUE;
+                              $_SESSION['email'] = $_POST['email'];
+                              $_SESSION['id'] = $id;
+
+                              $roles = new Roles();
+                              $result = $roles->getSpecificRole($role_id,$con);
+
+                              header('Location:user/');
+
+                              }
+  
+                            }else{
+                              echo 'The user does not exit in the system';
+                            }
 
                         }
 
                       }
-                }  
-            }
+              }  
           ?>
 
               <div class="card-body">

@@ -208,16 +208,17 @@ $stmt->close();
           <div class="sidebar-brand sidebar-brand-sm">
             <a href="index.html">MS</a>
           </div>
-            <ul class="sidebar-menu">
-              <li class="nav-item active">
-                <a href="/ModelSchool/user" class="nav-link ">
-                  <i class="fa fa-file"></i><span>Ready </span>
+             <ul class="sidebar-menu"><br>
+              <li class="menu-header" style="font-weight: bolder;font-size: 13px;">Documents</li>
+              <li class="nav-item active" style="padding-bottom: 30px;">
+                <a href="/ModelSchool/user" class="nav-link " style="margin-bottom: 10px;">
+                  <i class="fas fa-copy fa-7x" style="font-size:27px;"></i><span>Ready </span>
                 </a>
-                <a href="notreadydoc.php" class="nav-link ">
-                  <i class="fa fa-file"></i><span>Not Ready</span>
+                <a href="notreadydoc.php" class="nav-link " style="margin-bottom: 10px;">
+                  <i class="far fa-file-pdf" style="font-size:30px;"></i><span>Not Ready</span>
                 </a>
                 <a href="issuedDoc.php" class="nav-link ">
-                  <i class="fa fa-file"></i><span>Issued</span>
+                <i class="fas fa-archive" style="font-size:30px;"></i><span>Issued</span>
                 </a>
               </li>
             </ul>
@@ -231,50 +232,47 @@ $stmt->close();
                <div class="col-12">
                 <div class="card">
                   <div class="card-header">
-                    <h4>Documents</h4>
+                    <h4 style="font-size: 23px !important;">Not Ready Documents</h4>
                     <div class="card-header-action">
                       <?php
-
+                      $doc = new Doc();
                       $roles = new Roles();
                       $role = $roles->getSpecificRole($role_id,$con);
 
-                      if($role='Issue'){
+                      if($role==='Issue'){
 
                       }else{
 
-                      ?>
-                      <button   data-toggle="modal" data-target="#logoutModal" class="dropdown-item has-icon text-danger btn btn-primary" style="color: white !important;" class="btn btn-primary">Add Document</button>
-
-                      <?php
-                        }
+                      }
                       ?>
                     </div>
                   </div>
                   <div class="card-body p-0">
+                    <?php if(isset($_GET['makePayment'])){
+                        include 'makePayment.php';
+                    }else{ ?>
                     <div class="table-responsive">
-                      <table class="table table-striped" id="sortable-table">
+                      <table class="table table-striped" id="example">
                         <?php 
 
-                         
-
-                        if($role='Issue'){
+                        if($role ==='Issue'){
                           ?>
                         <thead>
                           <tr>
                             <th>Code</th>
-                            <th>Document</th>
                             <th>Level</th>
                             <th>Holder</th>
                             <th>Reg. no</th>
                             <th>Issue Year</th>
+                            <th>Initial Demanded</th>
+                            <th>Balance</th>
                             <th>Status</th>
-                            <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
                         <?php
-                          $doc = new Doc();
-                          $result=$doc->getAllActiveDocs();
+                          
+                          $result=$doc->getAllNotReadyDocs();
 
                           if (! empty($result)) {
 
@@ -282,15 +280,14 @@ $stmt->close();
                             ?>
 
                             <tr>
-
                               <td><?php echo $result[$k]["Code"]; ?></td>
-                              <td><?php echo $result[$k]["file_name"]; ?></td>
                               <td><?php echo $result[$k]["level"]; ?></td>
                               <td><?php  echo $result[$k]["Holder"];?></td>
                               <td><?php  echo $result[$k]["reg_no"];?></td>
                               <td><?php  echo $result[$k]["issue_year"];?></td>
+                              <td><?php  echo number_format($result[$k]["Payment"]);?></td>
+                              <td><?php  echo number_format($result[$k]["balance"]);?></td>
                               <td><?php  echo $result[$k]["status"];?></td>
-                              <td><a  class="btn btn-primary issue" data-id='<?php echo $result[$k]["id"];?>' id="<?php echo $result[$k]["id"];?>" style="color: white !important;">Issue</a></td>
                             </tr>
 
                           <?php
@@ -303,18 +300,19 @@ $stmt->close();
                         <thead>
                           <tr>
                             <th>Code</th>
-                            <th>Document</th>
                             <th>Level</th>
                             <th>Holder</th>
                             <th>Reg. no</th>
                             <th>Issue Year</th>
+                            <th>Initial Demanded</th>
+                            <th>Balance</th>
                             <th>Status</th>
                           </tr>
                         </thead>
                         <tbody>
                           <?php
                           $doc = new Doc();
-                          $result=$doc->getAllActiveDocs();
+                          $result=$doc->getAllNotReadyDocs();
 
                           if (! empty($result)) {
 
@@ -323,12 +321,13 @@ $stmt->close();
                             <tr>
 
                               <td> <?php echo $result[$k]["Code"]; ?></td>
-                              <td> <?php echo $result[$k]["file_name"]; ?></td>
                               <td> <?php echo $result[$k]["level"]; ?></td>
                               <td> <?php  echo $result[$k]["Holder"];?></td>
                               <td> <?php  echo $result[$k]["reg_no"];?></td>
                               <td> <?php  echo $result[$k]["issue_year"];?></td>
-                              <td> <?php  echo $result[$k]["status"];?></td>
+                              <td><?php  echo number_format($result[$k]["payment"]);?></td>
+                              <td><?php  echo number_format($result[$k]["balance"]);?></td>
+                               <td><a href="notreadydoc.php?makePayment=<?php echo $result[$k]["id"];?>" class="btn btn-primary issue" style="color: white !important;">Make Payment</a></td>
 
                             </tr>
                           <?php
@@ -340,59 +339,13 @@ $stmt->close();
                         </tbody>
                       </table>
                     </div>
+
+                    <?php }?>
                   </div>
                 </div>
               </div>
           </div>
         </section>
-      </div>
-
-       <!-- Logout Modal-->
-      <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Add a Document </h5>
-              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <form id="doc"  method='post' action='' enctype="multipart/form-data">
-                  <div class="form-group col-md-12 col-lg-12">
-                    <label>Document</label>
-                    <input id="uploadImage" type="file" id="file" name="file" />
-                  </div>
-                  <div class="form-group col-md-12 col-lg-12">
-                    <label>Document Code</label>
-                    <input type="text" name="code" id="code" class="form-control">
-                  </div>
-                  <div class="form-group col-md-12 col-lg-12">
-                    <label>Level</label>
-                    <input type="text" name="level" id="level" class="form-control">
-                  </div>
-                   <div class="form-group col-md-12 col-lg-12">
-                    <label>Holder (full Names)</label>
-                    <input type="text" name="name" id="name" class="form-control">
-                  </div>
-                  <div class="form-group col-md-12 col-lg-12">
-                    <label>Reg.NO</label>
-                    <input type="text" name="regno" id="regno" class="form-control">
-                  </div>
-                   <div class="form-group col-md-12 col-lg-12">
-                    <label>Doc Year</label>
-                    <input type="date" name="year" id="year" class="form-control">
-                  </div>
-                  <div class="form-group col-md-12 col-lg-12">
-                    <label>Amount Demanded</label>
-                    <input type="text" name="amout" id="amount" class="form-control">
-                  </div>
-                     <input type="hidden" name="docid" id="docid" />
-                     <input type="submit" name="add_doc" id="add_doc" value="Save" class="btn btn-success" /> 
-              </form>
-          </div>
-          </div>
-        </div>
       </div>
 
       <footer class="main-footer">
@@ -430,37 +383,17 @@ $stmt->close();
   <!-- Page Specific JS File -->
   <script src="../assets/js/page/components-table.js"></script>
 
+  <script src="../assets/js/jquery.dataTables.min.js"></script>
+  <script src="../assets/js/dataTables.bootstrap4.min.js"></script>
+
   <script type="text/javascript">
-    $(document).ready(function(){ 
+    
+    $(document).ready(function() {
 
-        $('.issue').click(function(){
-            var el = this;
+        $('#example').DataTable();
 
-            // document id
-            var id = $(this).data('id');
-            
-            var confirmalert = confirm(" You are about to Issue a document, Are you sure?");
-            if (confirmalert == true) {
-                // AJAX Request
-                $.ajax({
-                    url: 'issue_doc.php',
-                    type: 'POST',
-                    data: { id:id },
-                    success: function(response){
-        
-                        if(response == 1){
-
-                          alert('You have successfuly Issued the Doc');
-                            
-                        }else{
-                            alert('Invalid ID.');
-                        }
-                    }
-                });
-            }
-        });
-
-    });
+      } );
   </script>
+
 </body>
 </html>

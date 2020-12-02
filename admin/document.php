@@ -185,19 +185,34 @@
           <div class="sidebar-brand sidebar-brand-sm">
             <a href="index.html">MS</a>
           </div>
-          <ul class="sidebar-menu">
+            <ul class="sidebar-menu">
+              <li class="menu-header">Dashboard</li>
+              <li class="nav-item  active">
+                <a href="#" class="nav-link ">
+                  <i class="fas fa-fire"></i><span>Dashboard</span>
+                </a>
+              </li>
+
+              <li class="menu-header">Documents</li>
+              <li class="nav-item  active">
+                <a href="document.php" class="nav-link ">
+                  <i class="fas fa-fire"></i><span>Ready</span>
+                </a>
+                <a href="notreadydoc.php" class="nav-link ">
+                  <i class="fa fa-file"></i><span>Un Ready</span>
+                </a>
+                <a href="issuedDoc.php" class="nav-link ">
+                  <i class="fa fa-user"></i><span>Issued</span>
+                </a>
+              </li>
+
+            <li class="menu-header">Users</li>
             <li class="nav-item  active">
-              <a href="/ModelSchool/admin" class="nav-link ">
-                <i class="fas fa-fire"></i><span>Dashboard</span>
-              </a>
-              <a href="document.php" class="nav-link ">
-                <i class="fa fa-file"></i><span>Documents</span>
-              </a>
               <a href="users.php" class="nav-link ">
                 <i class="fa fa-user"></i><span>Users</span>
               </a>
             </li>
-          </ul>
+            </ul>
         </aside>
       </div>
 
@@ -214,12 +229,12 @@
                     </div>
                   </div>
                   <div class="card-body p-0">
+                 
                     <div class="table-responsive">
-                      <table class="table table-striped" id="sortable-table">
+                      <table class="table table-striped" id="example">
                         <thead>
                           <tr>
                             <th>Code</th>
-                            <th>Document</th>
                             <th>Level</th>
                             <th>Holder</th>
                             <th>Reg. NO</th>
@@ -240,7 +255,6 @@
                             <tr>
 
                               <td> <?php echo $result[$k]["Code"]; ?></td>
-                              <td> <?php echo $result[$k]["file_name"]; ?></td>
                               <td> <?php echo $result[$k]["level"]; ?></td>
                               <td> <?php  echo $result[$k]["Holder"];?></td>
                               <td> <?php  echo $result[$k]["reg_no"];?></td>
@@ -294,5 +308,17 @@
   <script src="../assets/js/page/index.js"></script>
   <!-- Page Specific JS File -->
   <script src="../assets/js/page/components-table.js"></script>
+
+  <script src="../assets/js/jquery.dataTables.min.js"></script>
+  <script src="../assets/js/dataTables.bootstrap4.min.js"></script>
+
+  <script type="text/javascript">
+    
+    $(document).ready(function() {
+
+        $('#example').DataTable();
+
+      } );
+  </script>
 </body>
 </html>

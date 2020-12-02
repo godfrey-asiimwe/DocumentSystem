@@ -189,7 +189,7 @@ $stmt->close();
           </li>
           <li class="dropdown"><a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
             <img alt="image" src="../assets/img/avatar/avatar-1.png" class="rounded-circle mr-1">
-            <div class="d-sm-none d-lg-inline-block"><?php echo $lastname ?> <?php echo $firstname; ?></div></a>
+            <div class="d-sm-none d-lg-inline-block">Hi, Welcome Admin</div></a>
             <div class="dropdown-menu dropdown-menu-right">
              
               <div class="dropdown-divider"></div>
@@ -208,21 +208,34 @@ $stmt->close();
           <div class="sidebar-brand sidebar-brand-sm">
             <a href="index.html">MS</a>
           </div>
-            <ul class="sidebar-menu"><br>
-              <li class="menu-header" style="font-weight: bolder;font-size: 13px;">Documents</li>
-              <li class="nav-item active" style="padding-bottom: 30px;">
-                <a href="/ModelSchool/user" class="nav-link " style="margin-bottom: 10px;">
-                  <i class="fas fa-copy fa-7x" style="font-size:27px;"></i><span>Ready </span>
-                </a>
-                <a href="notreadydoc.php" class="nav-link " style="margin-bottom: 10px;">
-                  <i class="far fa-file-pdf" style="font-size:30px;"></i><span>Not Ready</span>
-                </a>
-                <a href="issuedDoc.php" class="nav-link ">
-                <i class="fas fa-archive" style="font-size:30px;"></i><span>Issued</span>
+           <ul class="sidebar-menu">
+              <li class="menu-header">Dashboard</li>
+              <li class="nav-item  active">
+                <a href="#" class="nav-link ">
+                  <i class="fas fa-fire"></i><span>Dashboard</span>
                 </a>
               </li>
-            </ul>
 
+              <li class="menu-header">Documents</li>
+              <li class="nav-item  active">
+                <a href="document.php" class="nav-link ">
+                  <i class="fas fa-fire"></i><span>Ready</span>
+                </a>
+                <a href="notreadydoc.php" class="nav-link ">
+                  <i class="fa fa-file"></i><span>Un Ready</span>
+                </a>
+                <a href="issuedDoc.php" class="nav-link ">
+                  <i class="fa fa-user"></i><span>Issued</span>
+                </a>
+              </li>
+
+            <li class="menu-header">Users</li>
+            <li class="nav-item  active">
+              <a href="users.php" class="nav-link ">
+                <i class="fa fa-user"></i><span>Users</span>
+              </a>
+            </li>
+            </ul>
         </aside>
       </div>
 
@@ -233,7 +246,7 @@ $stmt->close();
                <div class="col-12">
                 <div class="card">
                   <div class="card-header">
-                    <h4 style="font-size: 23px !important;">Documents Ready to Be Issued</h4>
+                    <h4 style="font-size: 23px !important;">Not Ready Documents</h4>
                     <div class="card-header-action">
                       <?php
 
@@ -244,20 +257,16 @@ $stmt->close();
 
                       }else{
 
-                      ?>
-                      <button   data-toggle="modal" data-target="#logoutModal" class="dropdown-item has-icon text-danger btn btn-primary" style="color: white !important;" class="btn btn-primary">Add Document</button>
-
-                      <?php
-                        }
+                      }
                       ?>
                     </div>
                   </div>
                   <div class="card-body p-0">
-                     
                     <div class="table-responsive">
-                      <table class="table table-striped table-bordered mb-0" id="example">
+                      <table class="table table-striped" id="example">
                         <?php 
-                        if($role==='Issue'){
+
+                        if($role ==='Issue'){
                           ?>
                         <thead>
                           <tr>
@@ -266,16 +275,13 @@ $stmt->close();
                             <th>Holder</th>
                             <th>Reg. no</th>
                             <th>Issue Year</th>
-                            <th>Initial Demanded</th>
-                            <th>Balance</th>
                             <th>Status</th>
-                            <th>Action</th>
                           </tr>
                         </thead>
                         <tbody>
                         <?php
                           $doc = new Doc();
-                          $result=$doc->getAllActiveDocs();
+                          $result=$doc->getAllNotReadyDocs();
 
                           if (! empty($result)) {
 
@@ -289,10 +295,7 @@ $stmt->close();
                               <td><?php  echo $result[$k]["Holder"];?></td>
                               <td><?php  echo $result[$k]["reg_no"];?></td>
                               <td><?php  echo $result[$k]["issue_year"];?></td>
-                               <td><?php  echo number_format($result[$k]["payment"]);?></td>
-                              <td><?php  echo number_format($result[$k]["balance"]);?></td>
                               <td><?php  echo $result[$k]["status"];?></td>
-                              <td><a  class="btn btn-primary issue" data-id='<?php echo $result[$k]["id"];?>' id="<?php echo $result[$k]["id"];?>" style="color: white !important;">Issue</a></td>
                             </tr>
 
                           <?php
@@ -309,8 +312,6 @@ $stmt->close();
                             <th>Holder</th>
                             <th>Reg. no</th>
                             <th>Issue Year</th>
-                            <th>Initial Demanded</th>
-                            <th>Balance</th>
                             <th>Status</th>
                           </tr>
                         </thead>
@@ -330,8 +331,6 @@ $stmt->close();
                               <td> <?php  echo $result[$k]["Holder"];?></td>
                               <td> <?php  echo $result[$k]["reg_no"];?></td>
                               <td> <?php  echo $result[$k]["issue_year"];?></td>
-                               <td><?php  echo number_format($result[$k]["payment"]);?></td>
-                              <td><?php  echo number_format($result[$k]["balance"]);?></td>
                               <td> <?php  echo $result[$k]["status"];?></td>
 
                             </tr>
@@ -344,67 +343,11 @@ $stmt->close();
                         </tbody>
                       </table>
                     </div>
-
                   </div>
                 </div>
               </div>
           </div>
         </section>
-      </div>
-
-       <!-- Logout Modal-->
-      <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Add a Document </h5>
-              <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">×</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <form id="doc"  method='post' action='' enctype="multipart/form-data">
-                 
-                  <div class="form-group col-md-12 col-lg-12">
-                    <label>Document No.</label>
-                    <input type="text" name="code" id="code" class="form-control" required>
-                  </div>
-                   <div class="form-group col-md-8 col-lg-8">
-                    <label>Select Level</label>
-                    <select class="form-control" name="level" id="level">
-                      <option value="UACE">UACE</option>
-                      <option value="UCE">UCE</option>
-                    </select>
-                  </div>
-                  <div class="form-group col-md-8 col-lg-8">
-                    <label>Select Document Type</label>
-                    <select class="form-control" name="type" id="type">
-                      <option value="passlip">Passlip</option>
-                      <option value="certificate">Certificate</option>
-                    </select>
-                  </div>
-                   <div class="form-group col-md-12 col-lg-12">
-                    <label>Holder (full Names)</label>
-                    <input type="text" name="name" id="name" class="form-control" required>
-                  </div>
-                  <div class="form-group col-md-12 col-lg-12">
-                    <label>Reg.NO</label>
-                    <input type="text" name="regno" id="regno" class="form-control" required>
-                  </div>
-                   <div class="form-group col-md-12 col-lg-12">
-                    <label>Doc Year</label>
-                    <input type="date" name="year" id="year" class="form-control" required>
-                  </div>
-                  <div class="form-group col-md-12 col-lg-12">
-                    <label>Amount Demanded</label>
-                    <input type="text" name="amount" id="amount" class="form-control" required>
-                  </div>
-                     <input type="hidden" name="docid" id="docid" />
-                     <input type="submit" name="add_doc" id="add_doc" value="Save" class="btn btn-success" /> 
-              </form>
-          </div>
-          </div>
-        </div>
       </div>
 
       <footer class="main-footer">
@@ -454,77 +397,5 @@ $stmt->close();
       } );
   </script>
 
-  <script type="text/javascript">
-
-    $(document).ready(function(){
-    
-      $('#add_doc').on('click', function(){
-
-          $code= $('#code').val();
-          $level= $('#level').val();
-          $name= $('#name').val();
-          $regno= $('#regno').val();
-          $year= $('#year').val();
-          $amount= $('#amount').val();
-          $type= $('#type').val();
-          
-          $.ajax({
-            type: "POST",
-            url: "ajaxfile.php",
-            data: {
-
-              code: $code,
-              level: $level,
-              name: $name,
-              regno: $regno,
-              year: $year,
-              amount: $amount,
-              type: $type,
-              
-            },
-            success: function(){
-
-             $("#doc")[0].reset();
-             $("#sortable-table").load(" #sortable-table");
-             alert(" Successfully Saved");
-
-            }
-          });
-      });
-    });
-
-
-
-    $(document).ready(function(){ 
-
-        $('.issue').click(function(){
-            var el = this;
-
-            // document id
-            var id = $(this).data('id');
-            
-            var confirmalert = confirm(" You are about to Issue a document, Are you sure?");
-            if (confirmalert == true) {
-                // AJAX Request
-                $.ajax({
-                    url: 'issue_doc.php',
-                    type: 'POST',
-                    data: { id:id },
-                    success: function(response){
-        
-                        if(response == 1){
-
-                          alert('You have successfuly Issued the Doc');
-                            
-                        }else{
-                            alert('Invalid ID.');
-                        }
-                    }
-                });
-            }
-        });
-
-    });
-  </script>
 </body>
 </html>
