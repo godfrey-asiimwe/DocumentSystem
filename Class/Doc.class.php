@@ -149,5 +149,26 @@ class Doc
       return $d['totalcerts'];
     }
 
+    //returning all issued documents
+    function getAllIssuedDocuments($con){
+      $users=mysqli_query($con,"SELECT COUNT(*) AS totalcerts FROM docs WHERE status='issued'");
+      $d=mysqli_fetch_assoc($users);
+      return $d['totalcerts'];
+    }
+
+    //returning all Ready documents
+    function getAllReadyDocuments($con){
+      $users=mysqli_query($con,"SELECT COUNT(*) AS totalcerts FROM docs WHERE status='active' AND balance=0");
+      $d=mysqli_fetch_assoc($users);
+      return $d['totalcerts'];
+    }
+
+    //returning all Not Ready documents
+    function getAllNotReadyDocuments($con){
+      $users=mysqli_query($con,"SELECT COUNT(*) AS totalcerts FROM docs WHERE status='active' AND balance>0");
+      $d=mysqli_fetch_assoc($users);
+      return $d['totalcerts'];
+    }
+
 }
 ?>
