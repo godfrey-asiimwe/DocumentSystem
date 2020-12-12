@@ -1,14 +1,9 @@
 <?php
-
   include ('../DB.php');
   require_once ("../Class/DB.class.php");
   require_once ("../Class/Doc.class.php");
-
-
   $doc = new Doc();
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,6 +43,32 @@
         };
 
         var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+        chart.draw(data, options);
+      }
+    </script>
+
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Year', 'Passlips', 'Certificates'],
+          ['2017', <?php echo $doc->getAllPasslipsByYear($con,'2017'); ?>,<?php echo $doc->getAllCertificatesbyYear($con,'2017'); ?>],
+          ['2018',  <?php echo $doc->getAllPasslipsByYear($con,'2018'); ?>, <?php echo $doc->getAllCertificatesbyYear($con,'2018'); ?>],
+          ['2019',  <?php echo $doc->getAllPasslipsByYear($con,'2019'); ?>,<?php echo $doc->getAllCertificatesbyYear($con,'2019'); ?>],
+          ['2020',  <?php echo $doc->getAllPasslipsByYear($con,'2020'); ?>,<?php echo $doc->getAllCertificatesbyYear($con,'2020'); ?>],
+          ['2021',  <?php echo $doc->getAllPasslipsByYear($con,'2021'); ?>,<?php echo $doc->getAllCertificatesbyYear($con,'2021'); ?>]
+        ]);
+
+        var options = {
+          title: 'Document Status',
+          curveType: 'function',
+          legend: { position: 'bottom' }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
 
         chart.draw(data, options);
       }
@@ -124,9 +145,6 @@
             <div class="col-lg-3 col-md-3 col-sm-12">
               <div class="card card-statistic-2">
                 
-                <div class="card-icon shadow-primary bg-primary">
-                  <i class="fas fa-archive" style="margin-top: 13px;"></i>
-                </div>
                 <div class="card-wrap">
                   <div class="card-header">
                     <h4>Total Passlips</h4>
@@ -142,9 +160,6 @@
               <div class="col-lg-3 col-md-3 col-sm-12">
               <div class="card card-statistic-2">
                  
-                <div class="card-icon shadow-primary bg-primary">
-                  <i class="fas fa-archive" style="margin-top: 13px;"></i>
-                </div>
                 <div class="card-wrap">
                   <div class="card-header">
                     <h4>Total Certificates</h4>
@@ -159,10 +174,6 @@
             </div>
             <div class="col-lg-3 col-md-3 col-sm-12">
               <div class="card card-statistic-2">
-              
-                <div class="card-icon shadow-primary bg-primary">
-                  <i class="fas fa-dollar-sign" style="margin-top: 13px;"></i>
-                </div>
                 <div class="card-wrap">
                   <div class="card-header">
                     <h4>Amounted Demanded</h4>
@@ -171,7 +182,7 @@
 
                    <?php
                     echo number_format($result=$doc->getTotalBalance($con));
-                   ?>=
+                   ?>
                   </div>
                 </div>
               </div>
@@ -179,9 +190,6 @@
             <div class="col-lg-3 col-md-3 col-sm-12">
               <div class="card card-statistic-2">
                 
-                <div class="card-icon shadow-primary bg-primary">
-                  <i class="fas fa-shopping-bag" style="margin-top: 13px;"></i>
-                </div>
                 <div class="card-wrap">
                   <div class="card-header">
                     <h4>Amount Recieved</h4>
@@ -189,26 +197,30 @@
                   <div class="card-body">
                     <?php
                     echo number_format($result=$doc->getTotalAmountPaid($con));
-                   ?>=
+                   ?>
                   </div>
                 </div>
               </div>
             </div>
           </div>
           <div class="row">
-               <div class="col-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h4>DashBoard</h4>
-                    <div class="card-header-action">
-                      
+             <div class="col-12">
+              <div class="card">
+                <div class="card-header">
+                  <h4>DashBoard</h4>
+                </div>
+                <div class="card-body p-0">
+                  <div class="row">  
+                    <div class="col-lg-5">
+                      <div id="piechart" style="width:100%; height: 400px;"></div>
                     </div>
-                  </div>
-                  <div class="card-body p-0">
-                    <div id="piechart" style="width: 900px; height: 500px;"></div>
+                    <div class="col-lg-7">
+                      <div id="curve_chart" style="width:100%; height: 400px"></div>
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
           </div>
         </section>
       </div>

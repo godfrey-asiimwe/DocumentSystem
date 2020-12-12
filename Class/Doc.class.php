@@ -142,9 +142,23 @@ class Doc
       return $d['totalcerts'];
     }
 
+    //return certificates by year
+     function getAllCertificatesbyYear($con,$year){
+      $certs=mysqli_query($con,"SELECT COUNT(*) AS totalcerts FROM docs WHERE type='certificate' AND issue_year='$year'");
+      $d=mysqli_fetch_assoc($certs);
+      return $d['totalcerts'];
+    }
+
     //returning all passlips
     function getAllPasslips($con){
       $users=mysqli_query($con,"SELECT COUNT(*) AS totalcerts FROM docs WHERE type='passlip'");
+      $d=mysqli_fetch_assoc($users);
+      return $d['totalcerts'];
+    }
+
+    //returning all passlips by year
+     function getAllPasslipsByYear($con,$year){
+      $users=mysqli_query($con,"SELECT COUNT(*) AS totalcerts FROM docs WHERE type='passlip' AND issue_year='$year'");
       $d=mysqli_fetch_assoc($users);
       return $d['totalcerts'];
     }

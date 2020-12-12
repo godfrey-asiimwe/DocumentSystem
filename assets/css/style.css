@@ -594,8 +594,9 @@ select.form-control:not([size]):not([multiple]) {
         margin-top: -1px; }
     .card .card-header h4 {
       font-size: 16px;
+      font-weight: bolder !important;
       line-height: 28px;
-      color: #273D62;
+      color:#BC2F11 !important;
       padding-right: 10px;
       margin-bottom: 0; }
       .card .card-header h4 + .card-header-action,
